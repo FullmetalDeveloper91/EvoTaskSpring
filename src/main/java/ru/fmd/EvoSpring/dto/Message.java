@@ -1,8 +1,10 @@
 package ru.fmd.EvoSpring.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,20 +13,24 @@ import java.time.LocalDateTime;
 
 @Entity
 public class Message {
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue
     private int id;
     private String title;
     private String text;
     private LocalDateTime time;
+    @ManyToOne
+    @JsonIgnore
+    private Person person;
 
     public Message(){
 
     }
 
-    public Message(String title, String text) {
+    public Message(String title, String text, LocalDateTime time, Person person) {
         this.title = title;
         this.text = text;
+        this.time = time;
+        this.person = person;
     }
 
     public int getId() {
@@ -57,5 +63,13 @@ public class Message {
 
     public void setTime(LocalDateTime time) {
         this.time = time;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
     }
 }
