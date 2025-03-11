@@ -23,4 +23,11 @@ public class PersonService {
         person.addMessage(message);
         return repository.save(person);
     }
+
+    public boolean delMessageByID(int personId, int messageId){
+        Person person = repository.findById(personId).orElseThrow();
+        boolean result = person.removeMessage(messageId);
+        repository.save(person);
+        return result;
+    }
 }

@@ -1,6 +1,10 @@
 package ru.fmd.EvoSpring.dto;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,11 +18,10 @@ public class Person {
     private String surname;
     private String lastname;
     private LocalDate birthday;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages;
 
-    public Person(){
-
+    public Person() {
     }
 
     public Person(String firstname, String surname, String lastname, LocalDate birthday) {
@@ -76,7 +79,15 @@ public class Person {
         this.birthday = birthday;
     }
 
+    public List<Message> getMessages() {
+        return List.copyOf(messages);
+    }
+
     public void addMessage(Message message){
         messages.add(message);
+    }
+
+    public boolean removeMessage(int id){
+        return messages.removeIf(m -> m.getId() == id);
     }
 }

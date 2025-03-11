@@ -5,9 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -22,8 +20,7 @@ public class Message {
     @JsonIgnore
     private Person person;
 
-    public Message(){
-
+    public Message() {
     }
 
     public Message(String title, String text, LocalDateTime time, Person person) {

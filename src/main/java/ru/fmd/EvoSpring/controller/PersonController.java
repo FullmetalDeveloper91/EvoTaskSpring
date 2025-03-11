@@ -1,7 +1,5 @@
 package ru.fmd.EvoSpring.controller;
 
-import jakarta.servlet.ServletRequest;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +28,8 @@ public class PersonController {
         return repository.findAll();
     }
 
-    @GetMapping("/{id}")
-    public Optional<Person> findPersonById(@PathVariable int id) {
+    @GetMapping("/{p_id}")
+    public Optional<Person> findPersonById(@PathVariable("p_id") int id) {
         return repository.findById(id);
     }
 
@@ -41,8 +39,8 @@ public class PersonController {
         return new ResponseEntity<>(person, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Person> updatePerson(@PathVariable int id, @RequestBody Person person) {
+    @PutMapping("/{p_id}")
+    public ResponseEntity<Person> updatePerson(@PathVariable("p_id") int id, @RequestBody Person person) {
         var oldPerson = repository.findById(id).orElse(null);
 
         if(oldPerson != null){
@@ -56,13 +54,18 @@ public class PersonController {
             return addPerson(person);
     }
 
-    @DeleteMapping("/{id}")
-    public void deletePerson(@PathVariable int id) {
+    @DeleteMapping("/{p_id}")
+    public void deletePerson(@PathVariable("p_id") int id) {
         repository.deleteById(id);
     }
 
-    @PostMapping("/{id}/message")
-    public ResponseEntity<Person> addMessage(@PathVariable int id, @RequestBody Message message){
+    @GetMapping("/{p_id}/message")
+    public Iterable<Message> getPersonMessage(@PathVariable("p_id") int personId){
+        return repository.findById(personId).get().getMessages();
+    }
+
+    @PostMapping("/{p_id}/message")
+    public ResponseEntity<Person> addMessage(@PathVariable("p_id") int id, @RequestBody Message message){
         Person person = null;
         HttpStatus status;
 
@@ -76,8 +79,18 @@ public class PersonController {
         return new ResponseEntity<>(person,status);
     }
 
-    @DeleteMapping("{p_id/message/{m_id}")
-    public void deleteMessage(@PathVariable int personId, @PathVariable int messageId){
+    @DeleteMapping("{p_id}/message/{m_id}")
+    public HttpStatus deleteMessage(@PathVariable("p_id") int personId, @PathVariable("m_id") int messageId){
+        HttpStatus status;
 
+        try{
+            if(service.delMessageByID(personId, messageId))
+                status = HttpStatus.OK;
+            else
+                status = HttpStatus.BAD_REQUEST;
+        }catch (NoSuchElementException ex){
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return status;
     }
 }
